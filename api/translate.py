@@ -7,6 +7,8 @@ last_s = None
 last_s2 = None
 last_time = 0
 
+no_translate_this = False
+
 path_next_s = "s_next"
 config_section = "setting"
 
@@ -14,7 +16,13 @@ config_section = "setting"
 
 
 def text(s_from, fromLang="auto", add_old=True):
-    global last_s, last_s2, last_time
+    global last_s, last_s2, last_time, no_translate_this
+
+    if (no_translate_this):
+        print("不翻译")
+        no_translate_this = False
+        return "", ""
+
     toLangZh, changeLang = tools.get_to_lang_zh_()
 
     server, changeServer = tools.get_server_()
@@ -25,7 +33,8 @@ def text(s_from, fromLang="auto", add_old=True):
 
     if (s_from is None):
         if (last_s is None):
-            return "复制即可翻译", "系统直接截图到剪贴板，自动识别并翻译" + "\n\n测试功能：\n勾选latex识别，可将图片公式转化为latex代码"
+            return "复制即可翻译", "系统直接截图到剪贴板，自动识别并翻译"\
+                + "\n\n测试功能：\n勾选latex识别，可将图片公式转化为latex代码"
         else:
             s_from = last_s
 
@@ -72,21 +81,30 @@ def ocr(img_path, latex=False):
 
 def check_server_translate(server, a, b):
     ok = False
+    a = a.strip().replace("\n", " ")
+    b = b.strip().replace("\n", " ")
 
     if (server == tools.server_tencent):
         ok = tencent.check(a, b)
     else:
         ok = baidu.check_translate(a, b)
 
-    return ok
+    return ok, a, b
 
 
 def check_server_ocr(server, a, b):
     ok = False
+    a = a.strip().replace("\n", " ")
+    b = b.strip().replace("\n", " ")
 
     if (server == tools.server_tencent):
         ok = tencent.check(a, b)
     else:
         ok = baidu.check_ocr(a, b)
 
-    return ok
+    return ok, a, b
+
+
+def set_no_translate_this(ntt=True):
+    global no_translate_this
+    no_translate_this = ntt

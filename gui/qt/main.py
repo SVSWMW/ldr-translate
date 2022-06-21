@@ -1,13 +1,13 @@
 import sys
-import os
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QAction, QMenu, QSystemTrayIcon, QApplication, QMessageBox
 
-import ui_translate
-
-from api import translate
 from api import config
 
+config.old2new()
+
+import ui_translate
+from api import translate
 import ui_preferences
 
 
@@ -59,17 +59,15 @@ class SystemTray(object):
 
         self.preferences.setupUi(self.preferences)
 
-
         self.preferences.show()
 
     def run(self):
-        self.auto = QAction('自动翻译', triggered=self.setAuto)
+        self.auto = QAction('复制即翻译', triggered=self.setAuto)
         self.auto.setEnabled(True)
         self.auto.setCheckable(True)
         self.auto.setChecked(True)
 
-        self.autostart = QAction('开机自启',
-                                        triggered=self.update_autostart)
+        self.autostart = QAction('开机自启', triggered=self.update_autostart)
         self.autostart.setEnabled(True)
         self.autostart.setCheckable(True)
         self.autostart.setChecked(config.get_autostart())
@@ -105,31 +103,26 @@ isAuto = True
 
 # 当剪切板变动会执行该方法
 def change_deal():
-    if(isAuto):
+    if (isAuto):
         data = clipboard.mimeData()
 
         formats = data.formats()
 
         isTranslate = True
 
-        print(formats)
-
         # 如果是文本格式，把内容打印出来
         if ('text/uri-list' in formats):
-            print("文件")
             isTranslate = False
         elif ('application/x-qt-image' in formats):
-            print("图片")
             # 必须有.png
             img_path = config.app_home_dir + "/copy_img.png"
             clipboard.image().save(img_path)
             ok, text_from = translate.ocr(img_path)
         else:
-            print("文本")
             text_from = data.text()
 
         if (isTranslate):
-            if(MainWindow.isHidden()):
+            if (MainWindow.isHidden()):
                 MainWindow.show()
 
             text_from, text_to = translate.text(text_from, add_old=ui.isAdd())
@@ -137,8 +130,6 @@ def change_deal():
 
 
 if __name__ == "__main__":
-
-    config.old2new()
 
     app = QApplication(sys.argv)
 

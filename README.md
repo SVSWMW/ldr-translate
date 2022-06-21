@@ -17,7 +17,7 @@
 
 #### GTk功能
 
-- 复制文本自动翻译(可划词翻译)
+- 复制文本自动翻译(可划词翻译)；复制兰译中的文本，不会自动翻译
 - 截图自动识别、并翻译
 - 可选追加复制、可自动去除文献中无意义的换行
 - 可修改复制内容，重新翻译
@@ -147,6 +147,24 @@ yay ldr-translate
 5. 追加模式
 
     有时候一句话在文献里分成上下两页，复制半句翻译有问题，这时候勾选 `追加模式`，接下来复制的内容，会和前一次的复制内容，一起翻译
+
+
+## 已知问题
+
+- qt版本，使用fcitx输入法的用户，无法输入中文
+
+    以 `archlinux-2022-05-25` 为例，当前python为 `python3.10`
+
+    ```bash
+    ln -s /usr/lib/qt/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so ~/.local/lib/python3.10/site-packages/PyQt5/Qt5/plugins/platforminputcontexts/
+    ```
+
+    重新打开兰朵儿即可
+
+- ubuntu22.04复制以后，鼠标移动到兰译，才能翻译
+
+    请不要使用wayland方式登录，登录输入密码前，右下角，选择 `xorg`
+
 
 ## 资料
 

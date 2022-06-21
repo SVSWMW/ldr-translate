@@ -18,7 +18,7 @@ class Translate(Gtk.ApplicationWindow):
         Gtk.Window.__init__(self)
         self.set_border_width(10)
         self.set_default_size(400, 360)
-        self.set_icon_from_file('./icon/icon.png')
+        self.set_icon_from_file('./icon/icon.svg')
         self.set_keep_above(True)
         self.set_title("兰译")
 
@@ -27,6 +27,11 @@ class Translate(Gtk.ApplicationWindow):
 
         self.tv_from = ui.get_object('tv_from')
         self.tv_to = ui.get_object('tv_to')
+
+        self.tv_from.connect("copy-clipboard", self.copy_)
+        self.tv_from.connect("cut-clipboard", self.copy_)
+        self.tv_to.connect("copy-clipboard", self.copy_)
+        self.tv_to.connect("cut-clipboard", self.copy_)
 
         self.cbt_server = ui.get_object('cbt_server')
         self.cbt_server.connect("changed", self.on_cbt_server_changed)
@@ -52,6 +57,9 @@ class Translate(Gtk.ApplicationWindow):
         self.cbt_server.set_active(tools.server_par())
         self.cbt_lang.set_active(tools.to_lang_zh_par())
         self.clipboard = self.getClipboard()
+
+    def copy_(self, a):
+        translate.set_no_translate_this()
 
     def open(self):
         self.is_hide = False
@@ -91,7 +99,8 @@ class Translate(Gtk.ApplicationWindow):
             img_path = config.app_home_dir + "/copy_img"
             image_pixbuf.savev(img_path, "png", "", "")
 
-            ok, text = translate.ocr(img_path, latex=self.cbtn_tex.get_active())
+            ok, text = translate.ocr(img_path,
+                                     latex=self.cbtn_tex.get_active())
         else:
             text = clipboard_.wait_for_text()
 
@@ -105,14 +114,14 @@ class Translate(Gtk.ApplicationWindow):
             ok, s_from = self.get_text_by_clipboard(self.clipboard)
             self.isFirsts[2] = False
 
-        if(self.cbtn_tex.get_active()):
-            if(s_from is None):
+        if (self.cbtn_tex.get_active()):
+            if (s_from is None):
                 s_from = "测试功能：\n勾选latex识别，可将图片公式转化为latex代码"
             self.set_text_view(s_from, "测试功能：\n勾选latex识别，可将图片公式转化为latex代码")
         else:
             self.translate_by_s(s_from)
 
-# 按钮再次翻译（可能修改了文本）
+    # 按钮再次翻译（可能修改了文本）
     def update_translate_view(self, view=None):
 
         textbuffer_from = self.tv_from.get_buffer()
@@ -125,7 +134,8 @@ class Translate(Gtk.ApplicationWindow):
 
     def translate_by_s(self, s_from=None):
 
-        s_from, s_to = translate.text(s_from, add_old=self.cbtn_add_old.get_active())
+        s_from, s_to = translate.text(s_from,
+                                      add_old=self.cbtn_add_old.get_active())
         self.set_text_view(s_from, s_to)
 
     def set_text_view(self, s_from, s_to):
@@ -133,8 +143,9 @@ class Translate(Gtk.ApplicationWindow):
         textbuffer_from = self.tv_from.get_buffer()
         textbuffer_to = self.tv_to.get_buffer()
 
-        textbuffer_from.set_text(s_from.strip())
-        textbuffer_to.set_text(s_to.strip())
+        if(len(s_from.strip()) > 0 and len(s_to.strip()) > 0):
+            textbuffer_from.set_text(s_from.strip())
+            textbuffer_to.set_text(s_to.strip())
 
     def getClipboard(self):
         if (config.get_config_setting()["translate_way_copy"]):

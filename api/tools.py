@@ -7,9 +7,7 @@ translate_to_languages_zh = config.get_config_setting(
 )["translate_to_languages_zh"]
 
 last_server_name = ""
-server_name = config.get_config_setting(
-)["server_name"]
-
+server_name = config.get_config_setting()["server_name"]
 
 server_baidu = config.config_sections_baidu
 server_baidu_name = "百度"
@@ -93,7 +91,7 @@ def get_to_lang_zh_():
 
 # 中文转为序号，与第三方对应
 def to_lang_zh2par(zh):
-    if(zh is None or len(zh) == 0):
+    if (zh is None or len(zh) == 0):
         return 0
     i = translate_to_languages_zh.index(zh)
     if (i < 0):
@@ -103,3 +101,14 @@ def to_lang_zh2par(zh):
 
 def to_lang_zh_par():
     return to_lang_zh2par(get_to_lang_zh())
+
+
+def error2zh(error_code, error_msg, dict):
+    error_code = str(error_code)
+    s = ""
+    if (error_code in dict):
+        s = dict[error_code]
+
+    s = "%s\n\n错误码：%s，%s" % (s, error_code, error_msg)
+
+    return s.strip()

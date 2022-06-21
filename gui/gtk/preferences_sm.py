@@ -10,7 +10,6 @@
 # License: GPL v3
 #
 
-import shutil
 import re
 import logging
 import os
@@ -18,7 +17,6 @@ from gettext import gettext as _
 import json
 
 from gi.repository import Gtk
-from gi.repository import Gio
 from api.config import DIR_CONFIG
 
 from sensors import SensorManager
@@ -40,6 +38,7 @@ class SensorsListModel(object):
     add/edit/delete custom sensors."""
 
     def __init__(self, parent):
+
         self.ind_parent = parent
         self._list_store = Gtk.ListStore(str, str)
         self._tree_view = Gtk.TreeView(self._list_store)
@@ -217,9 +216,10 @@ class Preferences(Gtk.ApplicationWindow):
 
     SETTINGS_FILE = DIR_CONFIG + '/preferences_sm.json'
     settings = {}
+
     # print(SETTINGS_FILE)
 
-    def __init__(self, parent):
+    def __init__(self, parent, ind_parent):
         """It creates the widget of the dialogs"""
         Gtk.Window.__init__(self)
         self.set_border_width(10)
@@ -228,7 +228,7 @@ class Preferences(Gtk.ApplicationWindow):
         self.set_keep_above(True)
         self.set_title("监测设置")
 
-        self.ind_parent = parent
+        self.ind_parent = ind_parent
         self.custom_entry = None
         self.interval_entry = None
         self.sensor_mgr = SensorManager()
